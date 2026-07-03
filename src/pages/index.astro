@@ -149,7 +149,7 @@ const galleryItems = [
 					<p class="section-copy">
 						Completa tus datos, elegi categoria, acepta el reglamento y confirma tu inscripcion.
 					</p>
-					<form class="form-card" id="registrationForm">
+					<form class="form-card" id="registrationForm" method="post" action="/api/inscripcion">
 						<div class="form-progress">
 							<span class="active">1 Datos</span>
 							<span>2 Categoria</span>
@@ -621,10 +621,19 @@ const galleryItems = [
 				}
 
 				try {
-					const res = await fetch('/api/inscripcion', {
+					const res = await fetch(form.action, {
 						method: 'POST',
-						body: data
+						body: data,
+						headers: {
+							accept: 'application/json'
+						}
 					})
+					const contentType = res.headers.get('content-type') || ''
+					if (!contentType.includes('application/json')) {
+						throw new Error(
+							'El servicio de inscripcion no esta disponible. Verifica que el sitio haya sido publicado con funciones de servidor.'
+						)
+					}
 					const result = await res.json()
 
 					if (!res.ok || !result.ok) {

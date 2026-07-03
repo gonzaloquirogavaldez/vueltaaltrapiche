@@ -142,13 +142,13 @@ export const POST: APIRoute = async ({ request }) => {
 		const pass = process.env.SMTP_PASS
 		const secure = process.env.SMTP_SECURE === 'true'
 		const from = process.env.SMTP_FROM || user
-		const to = process.env.MAIL_TO || 'hola@doblebe.com.ar'
+		const to = process.env.MAIL_TO
 
-		if (!host || !user || !pass || !from) {
+		if (!host || !user || !pass || !from || !to) {
 			return response(
 				{
 					ok: false,
-					message: 'SMTP no esta configurado. Revisa SMTP_HOST, SMTP_USER, SMTP_PASS y SMTP_FROM.'
+					message: 'El envio de correo no esta configurado correctamente.'
 				},
 				500
 			)

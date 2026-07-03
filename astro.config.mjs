@@ -5,7 +5,7 @@ import lottie from "astro-integration-lottie";
 import sitemap from "@astrojs/sitemap";
 import react from "@astrojs/react";
 import markdoc from "@astrojs/markdoc";
-import netlify from "@astrojs/netlify";
+import node from "@astrojs/node";
 
 // https://astro.build/config
 export default defineConfig({
@@ -20,5 +20,5 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  adapter: netlify({ imageCDN: false }),
+  adapter: node({ mode: "standalone" }),
 });
