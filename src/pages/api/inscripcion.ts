@@ -1,5 +1,4 @@
 import type { APIRoute } from 'astro'
-import { getStore } from '@netlify/blobs'
 import nodemailer from 'nodemailer'
 
 export const prerender = false
@@ -20,7 +19,6 @@ type InscriptionPayload = {
 
 type InscriptionData = Required<Omit<InscriptionPayload, 'reglamento'>> & {
 	reglamento: boolean
-	comprobanteUrl: string
 }
 
 const requiredFields: Array<keyof InscriptionPayload> = [
@@ -53,14 +51,6 @@ const escapeHtml = (value: string) =>
 		.replace(/"/g, '&quot;')
 		.replace(/'/g, '&#039;')
 
-const allowedFileTypes = new Map([
-	['image/png', 'png'],
-	['image/jpeg', 'jpg'],
-	['image/webp', 'webp']
-])
-
-const maxFileSize = 5 * 1024 * 1024
-
 const buildText = (data: InscriptionData) => {
 	const nombreCompleto = `${data.nombre} ${data.apellido}`.trim()
 
@@ -76,7 +66,6 @@ const buildText = (data: InscriptionData) => {
 		`Equipo: ${data.equipo || '-'}`,
 		`Evento: ${data.evento}`,
 		`Categoria: ${data.categoria}`,
-		`Comprobante: ${data.comprobanteUrl}`,
 		'',
 		`Acepto reglamento: ${data.reglamento ? 'Si' : 'No'}`
 	].join('\n')
@@ -93,7 +82,6 @@ const buildHtml = (data: InscriptionData) => {
 		['Equipo', escapeHtml(data.equipo || '-')],
 		['Evento', escapeHtml(data.evento)],
 		['Categoria', escapeHtml(data.categoria)],
-		['Comprobante', `<a href="${data.comprobanteUrl}">Ver comprobante de pago</a>`],
 		['Acepto reglamento', data.reglamento ? 'Si' : 'No']
 	]
 
@@ -132,8 +120,6 @@ export const POST: APIRoute = async ({ request }) => {
 			categoria: clean(raw.get('categoria')),
 			reglamento: raw.get('reglamento') === 'on'
 		}
-		const comprobante = raw.get('comprobante')
-
 		const missing = requiredFields.filter((field) => !data[field])
 		if (missing.length > 0 || !data.reglamento) {
 			return response(
@@ -148,19 +134,6 @@ export const POST: APIRoute = async ({ request }) => {
 
 		if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
 			return response({ ok: false, message: 'El email ingresado no es valido.' }, 400)
-		}
-
-		if (!(comprobante instanceof File) || comprobante.size === 0) {
-			return response({ ok: false, message: 'Adjunta el comprobante de pago.' }, 400)
-		}
-
-		const extension = allowedFileTypes.get(comprobante.type)
-		if (!extension) {
-			return response({ ok: false, message: 'El comprobante debe ser JPG, PNG o WEBP.' }, 400)
-		}
-
-		if (comprobante.size > maxFileSize) {
-			return response({ ok: false, message: 'El comprobante no puede superar los 5 MB.' }, 400)
 		}
 
 		const host = process.env.SMTP_HOST
@@ -181,23 +154,6 @@ export const POST: APIRoute = async ({ request }) => {
 			)
 		}
 
-		const store = getStore('vuelta-inscripciones')
-		const comprobanteKey = `${crypto.randomUUID()}.${extension}`
-		await store.set(comprobanteKey, await comprobante.arrayBuffer(), {
-			metadata: {
-				contentType: comprobante.type,
-				fileName: comprobante.name,
-				email: data.email
-			}
-		})
-
-		const siteUrl = process.env.PUBLIC_SITE_URL || new URL(request.url).origin
-		const comprobanteUrl = `${siteUrl}/api/comprobantes/${encodeURIComponent(comprobanteKey)}`
-		const emailData = {
-			...data,
-			comprobanteUrl
-		}
-
 		const transporter = nodemailer.createTransport({
 			host,
 			port,
@@ -209,8 +165,8 @@ export const POST: APIRoute = async ({ request }) => {
 		})
 
 		const subject = `Inscripcion Vuelta al Trapiche - ${data.nombre} ${data.apellido}`
-		const text = buildText(emailData)
-		const html = buildHtml(emailData)
+		const text = buildText(data)
+		const html = buildHtml(data)
 
 		await transporter.sendMail({
 			from,

@@ -116,27 +116,27 @@ const galleryItems = [
 							<div class="event-icon">
 								<img src="/vuelta-logo.jpg" alt="" />
 							</div>
-							<h3>Vuelta al Trapiche</h3>
+							<h3>Vuelta al Trapiche 60 km</h3>
 							<p class="date">14 y 15 de noviembre 2026</p>
 							<p>
-								La carrera de Mountain Bike mas emocionante de San Luis. Rally Bike entre
-								montanas, rios y senderos unicos en El Trapiche.
+								El desafio competitivo de Mountain Bike entre montanas, rios y senderos
+								unicos de El Trapiche.
 							</p>
-							<div class="tags"><span>Rally Bike</span><span>MTB</span><span>San Luis</span></div>
+							<div class="tags"><span>60 km</span><span>Competitivo</span><span>MTB</span></div>
 							<a href="#inscripcion">Inscribirme</a>
 						</article>
 						<article class="event-card">
 							<div class="event-icon orange">
 								<img src="/vuelta-logo.jpg" alt="" />
 							</div>
-							<h3>Kit Oficial</h3>
-							<p class="date">Primeros 200 inscriptos</p>
+							<h3>Vuelta al Trapiche 35 km</h3>
+							<p class="date">14 y 15 de noviembre 2026</p>
 							<p>
-								Asegura tu lugar y accede al kit oficial del evento. Cupos limitados para los
-								corredores que completen la inscripcion online.
+								Un recorrido promocional para disfrutar el paisaje, los caminos serranos y
+								la experiencia de correr en El Trapiche.
 							</p>
-							<div class="tags"><span>Kit</span><span>Cupos limitados</span><span>Premios</span></div>
-							<a href="#inscripcion">Reservar lugar</a>
+							<div class="tags"><span>35 km</span><span>Promocional</span><span>MTB</span></div>
+							<a href="#inscripcion">Inscribirme</a>
 						</article>
 					</div>
 				</div>
@@ -149,7 +149,7 @@ const galleryItems = [
 					<p class="section-copy">
 						Completa tus datos, elegi categoria, acepta el reglamento y confirma tu inscripcion.
 					</p>
-					<form class="form-card" id="registrationForm" enctype="multipart/form-data">
+					<form class="form-card" id="registrationForm">
 						<div class="form-progress">
 							<span class="active">1 Datos</span>
 							<span>2 Categoria</span>
@@ -168,13 +168,21 @@ const galleryItems = [
 								<label>Localidad<input name="localidad" type="text" placeholder="Ej: San Luis" required /></label>
 							</div>
 							<label>Equipo<input name="equipo" type="text" placeholder="Ej: Pedal Sur Team" /></label>
-							<label>
-								Evento
-								<select name="evento">
-									<option>Vuelta al Trapiche - Rally Bike</option>
-									<option>Campeonato regional</option>
-								</select>
-							</label>
+							<fieldset class="route-options">
+								<legend>Elegí tu recorrido</legend>
+								<div>
+									<label>
+										<input type="radio" name="evento" value="Vuelta al Trapiche - 35 km" required />
+										<strong>35 km</strong>
+										<span>Recorrido promocional</span>
+									</label>
+									<label>
+										<input type="radio" name="evento" value="Vuelta al Trapiche - 60 km" required />
+										<strong>60 km</strong>
+										<span>Recorrido competitivo</span>
+									</label>
+								</div>
+							</fieldset>
 							<div class="form-buttons">
 								<button class="submit form-next" type="button">Continuar</button>
 							</div>
@@ -204,7 +212,15 @@ const galleryItems = [
 								confirmada una vez completado el pago. El corredor acepta las condiciones de
 								seguridad, categoria, recorrido y horarios definidos por la organizacion.
 							</div>
-							<label class="check"><input name="reglamento" type="checkbox" required /> He leido y acepto el reglamento completo.</label>
+							
+							<a href="/assets/reglamento.pdf" target="_blank" rel="noopener noreferrer">
+								<div class="submit form-next">
+									<span><i class="fas fa-download"></i> Ver reglamento</span>
+								</div>
+							</a>
+							<label class="check" style="padding-top: 10px;">
+								<input name="reglamento" type="checkbox" required /> He leido y acepto el reglamento completo.
+							</label>
 							<div class="form-buttons split">
 								<button class="submit secondary form-prev" type="button">Volver</button>
 								<button class="submit form-next" type="button">Continuar</button>
@@ -214,13 +230,28 @@ const galleryItems = [
 						<div class="form-panel" data-step-panel="3">
 							<div class="payment-box">
 								<span>Datos para transferencia</span>
-								<strong>CBU 123456789123456</strong>
-								<small>Adjunta el comprobante en imagen JPG, PNG o WEBP. Maximo 5 MB.</small>
+								<div class="payment-prices">
+									<div class="payment-price"><span>1 pago</span><strong>$130.000</strong></div>
+									<div class="payment-price"><span>2 pagos</span><strong>$70.000</strong><small>cada uno</small></div>
+									<div class="payment-price featured"><span>3 pagos</span><strong>$50.000</strong><small>cada uno · solo julio</small></div>
+								</div>
+
+								<div class="payment-detail">
+									<strong>CBU: <span>1430001713043800340017</span></strong>
+									<button type="button" class="copy-button" data-copy="1430001713043800340017" aria-label="Copiar CBU">Copiar</button>
+								</div>
+								<div class="payment-detail">
+									<strong>Alias: <span>vueltaaeltrapiche</span></strong>
+									<button type="button" class="copy-button" data-copy="vueltaaeltrapiche" aria-label="Copiar alias">Copiar</button>
+								</div>
+								<strong>Número de cuenta: 1304380034001</strong>
+								<small>CUIT/CUIL: 20 - 28838330 - 9</small>
+								<small>Titular: MARIANO DANIEL GIL</small>
 							</div>
-							<label class="file-input">
-								Comprobante de pago
-								<input name="comprobante" type="file" accept="image/png,image/jpeg,image/webp" required />
-							</label>
+							<div class="payment-notice">
+								<strong>Importante:</strong> una vez realizado el pago, es obligatorio enviar el comprobante por WhatsApp.
+								<a href="https://wa.me/5492664630799?text=Hola%2C%20env%C3%ADo%20el%20comprobante%20de%20pago%20de%20mi%20inscripci%C3%B3n%20a%20la%20Vuelta%20al%20Trapiche." target="_blank" rel="noopener noreferrer">Enviar comprobante por WhatsApp</a>
+							</div>
 							<div class="form-buttons split">
 								<button class="submit secondary form-prev" type="button">Volver</button>
 								<button class="submit" type="submit">Confirmar inscripcion</button>
@@ -242,10 +273,12 @@ const galleryItems = [
 								responsabilidades, modificaciones y condiciones generales antes de confirmar tu lugar.
 							</p>
 						</div>
-						<a class="download-card" href="/reglamento-vuelta-al-trapiche-2026.txt" download>
-							<span>PDF / TXT</span>
-							<strong>Descargar reglamento</strong>
-							<small>Vuelta al Trapiche 2026</small>
+						<a href="/assets/reglamento.pdf" target="_blank">
+						<div class="download-card">
+							<span style="padding-top: 100px;">Descargar PDF</span>
+							<strong>Reglamento oficial</strong>
+							<small>Vuelta al Trapiche 2026</small>							
+						</div>
 						</a>
 					</div>
 				</div>
@@ -258,41 +291,51 @@ const galleryItems = [
 					<div class="route-grid">
 						<article
 							class="route-card"
-							data-map-title="Rally Bike competitivo"
-							data-map-src="https://www.google.com/maps?q=Vuelta%20al%20Trapiche%20El%20Trapiche%20San%20Luis&output=embed"
+							data-map-title="Recorrido 60 km"
+							data-map-image="/assets/60kmfull.jpeg"
 							data-map-link="https://maps.app.goo.gl/R3TzMoWtfJbaSdJ4A"
 							tabindex="0"
 							role="button"
 						>
 							<div class="map-art">
-								<svg viewBox="0 0 420 220" role="img" aria-label="Recorrido competitivo">
-									<path d="M34 170C86 86 140 118 185 75c47-45 83-28 112 12 30 41 62 44 90 10" fill="none" stroke="#05f711" stroke-width="10" stroke-linecap="round" />
-									<path d="M34 170C86 86 140 118 185 75c47-45 83-28 112 12 30 41 62 44 90 10" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="9 14" stroke-linecap="round" />
-								</svg>
+								<img src="/assets/65k.png" alt="Mapa y perfil de elevación del recorrido de 60 km" loading="lazy" />
 							</div>
-							<h3>Rally Bike competitivo</h3>
+							<h3>Recorrido 60 km</h3>
 							<p>Senderos, caminos serranos y sectores tecnicos para vivir El Trapiche a ritmo de carrera.</p>
-							<div class="route-stats"><span>MTB</span><span>Sierra</span><span>Rio</span></div>
+							<div class="route-stats"><span>60 km</span><span>Competitivo</span><span>MTB</span></div>
 							<span class="route-open">Ver ubicacion</span>
 						</article>
 						<article
 							class="route-card"
-							data-map-title="Recorrido promocional"
-							data-map-src="https://www.google.com/maps?q=Vuelta%20al%20Trapiche%20El%20Trapiche%20San%20Luis&output=embed"
+							data-map-title="Recorrido 35 km"
+							data-map-image="/assets/35kmfull.jpeg"
 							data-map-link="https://maps.app.goo.gl/R3TzMoWtfJbaSdJ4A"
 							tabindex="0"
 							role="button"
 						>
 							<div class="map-art alt">
-								<svg viewBox="0 0 420 220" role="img" aria-label="Recorrido participativo">
-									<path d="M38 126c56-58 102-56 143-22 37 31 73 35 111 2 28-24 57-28 91-5" fill="none" stroke="#05f711" stroke-width="10" stroke-linecap="round" />
-									<path d="M38 126c56-58 102-56 143-22 37 31 73 35 111 2 28-24 57-28 91-5" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="9 14" stroke-linecap="round" />
-								</svg>
+								<img src="/assets/35k.png" alt="Mapa y perfil de elevación del recorrido de 35 km" loading="lazy" />
 							</div>
-							<h3>Recorrido promocional</h3>
+							<h3>Recorrido 35 km</h3>
 							<p>Una opcion pensada para disfrutar la experiencia con menor exigencia y el mismo entorno natural.</p>
-							<div class="route-stats"><span>Promo</span><span>Amateur</span><span>Paisaje</span></div>
+							<div class="route-stats"><span>35 km</span><span>Promocional</span><span>Paisaje</span></div>
 							<span class="route-open">Ver ubicacion</span>
+						</article>
+						<article
+							class="route-card"
+							data-map-title="Circuito contrarreloj"
+							data-map-image="/assets/crono.png"
+							data-map-link="https://maps.app.goo.gl/R3TzMoWtfJbaSdJ4A"
+							tabindex="0"
+							role="button"
+						>
+							<div class="map-art">
+								<img src="/assets/crono.png" alt="Circuito de la contrarreloj" loading="lazy" />
+							</div>
+							<h3>Circuito contrarreloj</h3>
+							<p>La prueba que se realiza el sabado, un dia antes de la carrera principal.</p>
+							<div class="route-stats"><span>Contrarreloj</span><span>Sabado</span><span>MTB</span></div>
+							<span class="route-open">Ver circuito</span>
 						</article>
 					</div>
 				</div>
@@ -327,13 +370,7 @@ const galleryItems = [
 					</div>
 					<button class="map-modal__close" type="button" data-map-close aria-label="Cerrar mapa">×</button>
 				</div>
-				<iframe
-					id="mapFrame"
-					title="Mapa del recorrido"
-					loading="lazy"
-					referrerpolicy="no-referrer-when-downgrade"
-					allowfullscreen
-				></iframe>
+				<img id="mapImage" class="map-modal__image" src="" alt="" />
 				<a class="map-modal__external" id="mapExternalLink" href="https://maps.app.goo.gl/R3TzMoWtfJbaSdJ4A" target="_blank">
 					Abrir en Google Maps
 				</a>
@@ -342,7 +379,7 @@ const galleryItems = [
 
 		<a
 			class="whatsapp-float"
-			href="https://wa.me/?text=Quiero%20informacion%20sobre%20la%20Vuelta%20al%20Trapiche%20https%3A%2F%2Fzyneronix-demos.web.app%2Fvuelta-al-trapiche%2F"
+			href="https://wa.me/5492664630799?text=Quiero%20informacion%20sobre%20la%20Vuelta%20al%20Trapiche"
 			target="_blank"
 			rel="noopener noreferrer"
 			aria-label="Contactar por WhatsApp"
@@ -401,6 +438,36 @@ const galleryItems = [
 				})
 			})
 
+			document.querySelectorAll('.copy-button').forEach((copyButton) => {
+				copyButton.addEventListener('click', async () => {
+					const button = copyButton as HTMLButtonElement
+					const value = button.dataset.copy || ''
+					const originalLabel = button.textContent || 'Copiar'
+
+					try {
+						if (navigator.clipboard && window.isSecureContext) {
+							await navigator.clipboard.writeText(value)
+						} else {
+							const input = document.createElement('textarea')
+							input.value = value
+							input.style.position = 'fixed'
+							input.style.opacity = '0'
+							document.body.appendChild(input)
+							input.select()
+							document.execCommand('copy')
+							input.remove()
+						}
+						button.textContent = 'Copiado'
+					} catch {
+						button.textContent = 'No se pudo copiar'
+					}
+
+					window.setTimeout(() => {
+						button.textContent = originalLabel
+					}, 1800)
+				})
+			})
+
 			const form = document.getElementById('registrationForm') as HTMLFormElement | null
 			const categoryInput = document.getElementById('categoryInput') as HTMLInputElement | null
 			const formMessage = document.getElementById('formMessage') as HTMLElement | null
@@ -410,7 +477,7 @@ const galleryItems = [
 			const nextButtons = Array.from(document.querySelectorAll('.form-next')) as HTMLButtonElement[]
 			const prevButtons = Array.from(document.querySelectorAll('.form-prev')) as HTMLButtonElement[]
 			const mapModal = document.getElementById('mapModal') as HTMLElement | null
-			const mapFrame = document.getElementById('mapFrame') as HTMLIFrameElement | null
+			const mapImage = document.getElementById('mapImage') as HTMLImageElement | null
 			const mapModalTitle = document.getElementById('mapModalTitle') as HTMLElement | null
 			const mapExternalLink = document.getElementById('mapExternalLink') as HTMLAnchorElement | null
 			let currentStep = 0
@@ -420,18 +487,21 @@ const galleryItems = [
 				mapModal.classList.remove('open')
 				mapModal.setAttribute('aria-hidden', 'true')
 				document.body.classList.remove('modal-open')
-				if (mapFrame) {
-					mapFrame.removeAttribute('src')
+				if (mapImage) {
+					mapImage.removeAttribute('src')
+					mapImage.alt = ''
 				}
 			}
 
 			document.querySelectorAll('.route-card').forEach((routeCard) => {
 				const openMap = () => {
 					const card = routeCard as HTMLElement
-					if (!mapModal || !mapFrame) return
-					mapFrame.src = card.dataset.mapSrc || ''
+					if (!mapModal || !mapImage) return
+					const routeTitle = card.dataset.mapTitle || 'Recorrido'
+					mapImage.src = card.dataset.mapImage || ''
+					mapImage.alt = `Mapa completo del ${routeTitle.toLowerCase()}`
 					if (mapModalTitle) {
-						mapModalTitle.textContent = card.dataset.mapTitle || 'Recorrido'
+						mapModalTitle.textContent = routeTitle
 					}
 					if (mapExternalLink) {
 						mapExternalLink.href = card.dataset.mapLink || 'https://maps.app.goo.gl/R3TzMoWtfJbaSdJ4A'
@@ -942,6 +1012,10 @@ const galleryItems = [
 		text-align: left;
 	}
 
+	.route-grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
 	.event-card,
 	.form-card,
 	.route-card,
@@ -1077,6 +1151,70 @@ const galleryItems = [
 		background: var(--surface);
 	}
 
+	.route-options {
+		margin: 20px 0;
+		border: 0;
+		padding: 0;
+	}
+
+	.route-options legend {
+		margin-bottom: 10px;
+		color: rgba(255, 255, 255, 0.72);
+		font-size: 0.83rem;
+		font-weight: 700;
+	}
+
+	.route-options > div {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 12px;
+	}
+
+	.route-options label {
+		position: relative;
+		display: flex;
+		min-height: 86px;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		margin: 0;
+		border: 2px solid rgba(255, 255, 255, 0.08);
+		border-radius: 12px;
+		background: rgba(255, 255, 255, 0.03);
+		color: var(--white);
+		cursor: pointer;
+		text-align: center;
+	}
+
+	.route-options label:hover,
+	.route-options label:has(input:focus-visible) {
+		border-color: rgba(5, 247, 17, 0.55);
+	}
+
+	.route-options label:has(input:checked) {
+		border-color: var(--teal-light);
+		background: rgba(5, 247, 17, 0.16);
+		box-shadow: 0 0 24px rgba(5, 247, 17, 0.16);
+	}
+
+	.route-options input {
+		position: absolute;
+		width: 1px;
+		min-height: 1px;
+		opacity: 0;
+	}
+
+	.route-options strong {
+		font-family: var(--head);
+		font-size: 1.25rem;
+		text-transform: uppercase;
+	}
+
+	.route-options span {
+		color: var(--gray);
+		font-size: 0.82rem;
+	}
+
 	.categories {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
@@ -1191,15 +1329,114 @@ const galleryItems = [
 		color: var(--gray);
 	}
 
-	.payment-box strong {
-		color: var(--teal-light);
-		font-family: var(--head);
-		font-size: clamp(1.5rem, 4vw, 2.2rem);
-		letter-spacing: 1px;
+	.payment-prices {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 8px;
+		margin: 4px 0 8px;
 	}
 
-	.file-input input {
-		padding: 10px;
+	.payment-price {
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		justify-content: center;
+		border: 1px solid rgba(255, 255, 255, 0.12);
+		border-radius: 10px;
+		background: rgba(0, 0, 0, 0.18);
+		padding: 12px 8px;
+		text-align: center;
+	}
+
+	.payment-price.featured {
+		border-color: rgba(5, 247, 17, 0.55);
+		background: rgba(5, 247, 17, 0.12);
+	}
+
+	.payment-price span {
+		color: var(--white);
+		font-size: 0.76rem;
+		font-weight: 800;
+		text-transform: uppercase;
+	}
+
+	.payment-price strong {
+		margin: 3px 0;
+		color: var(--teal-light);
+		font-family: var(--head);
+		font-size: clamp(1rem, 3vw, 1.35rem);
+		letter-spacing: 0.5px;
+	}
+
+	.payment-price small {
+		font-size: 0.66rem;
+		line-height: 1.2;
+	}
+
+	.payment-detail {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		border-top: 1px solid rgba(255, 255, 255, 0.12);
+		padding-top: 10px;
+	}
+
+	.payment-detail strong {
+		min-width: 0;
+		color: var(--white);
+		font-size: 0.95rem;
+	}
+
+	.payment-detail strong span {
+		color: var(--teal-light);
+		word-break: break-all;
+	}
+
+	.copy-button {
+		flex: 0 0 auto;
+		border: 1px solid rgba(5, 247, 17, 0.5);
+		border-radius: 8px;
+		background: rgba(5, 247, 17, 0.12);
+		padding: 7px 12px;
+		color: var(--teal-light);
+		font: inherit;
+		font-size: 0.8rem;
+		font-weight: 800;
+		cursor: pointer;
+	}
+
+	.copy-button:hover,
+	.copy-button:focus-visible {
+		background: rgba(5, 247, 17, 0.24);
+	}
+
+	.payment-notice {
+		display: grid;
+		gap: 12px;
+		margin-bottom: 18px;
+		border: 1px solid rgba(255, 185, 48, 0.55);
+		border-radius: 12px;
+		background: rgba(255, 185, 48, 0.1);
+		padding: 16px;
+		color: var(--white);
+		font-size: 0.92rem;
+		line-height: 1.5;
+	}
+
+	.payment-notice a {
+		width: fit-content;
+		border-radius: 9px;
+		background: #25d366;
+		padding: 10px 14px;
+		color: #07150c;
+		font-weight: 900;
+		text-decoration: none;
+	}
+
+	.payment-notice a:hover,
+	.payment-notice a:focus-visible {
+		background: #49df7e;
 	}
 
 	.rules-layout {
@@ -1248,9 +1485,33 @@ const galleryItems = [
 		color: rgba(255, 255, 255, 0.78);
 	}
 
+	.rule-actions {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 10px;
+		margin-top: 20px;
+	}
+
+	.rule-actions a {
+		border: 1px solid rgba(255, 255, 255, 0.55);
+		border-radius: 9px;
+		background: rgba(0, 0, 0, 0.16);
+		padding: 11px 10px;
+		color: var(--white);
+		font-size: 0.78rem;
+		font-weight: 900;
+		text-align: center;
+		text-transform: none;
+	}
+
+	.rule-actions a:hover,
+	.rule-actions a:focus-visible {
+		background: rgba(255, 255, 255, 0.18);
+	}
+
 	.map-art {
 		display: grid;
-		height: 230px;
+		aspect-ratio: 1;
 		margin-bottom: 24px;
 		place-items: center;
 		border-radius: 14px;
@@ -1267,6 +1528,13 @@ const galleryItems = [
 
 	.map-art svg {
 		width: 90%;
+	}
+
+	.map-art img {
+		width: 100%;
+		height: 100%;
+		border-radius: inherit;
+		object-fit: contain;
 	}
 
 	.route-open {
@@ -1345,12 +1613,12 @@ const galleryItems = [
 		line-height: 1;
 	}
 
-	.map-modal iframe {
+	.map-modal__image {
 		display: block;
 		width: 100%;
 		height: min(62vh, 560px);
 		min-height: 360px;
-		border: 0;
+		object-fit: contain;
 		background: #0d1b2a;
 	}
 
@@ -1577,7 +1845,7 @@ const galleryItems = [
 			flex-direction: column;
 		}
 
-		.map-modal iframe {
+		.map-modal__image {
 			height: 58vh;
 			min-height: 300px;
 		}
