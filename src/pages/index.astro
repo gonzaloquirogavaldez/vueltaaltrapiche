@@ -163,7 +163,7 @@ const galleryItems = [
 					<p class="section-copy">
 						Completa tus datos, elegi categoria, acepta el reglamento y confirma tu inscripcion.
 					</p>
-					<form class="form-card" id="registrationForm" method="post" action="/api/inscripcion">
+					<form class="form-card" id="registrationForm" method="post" action="https://api.cdjeventos.com.ar/inscripcion">
 						<div class="form-progress">
 							<span class="active">1 Datos</span>
 							<span>2 Categoria</span>
@@ -246,8 +246,8 @@ const galleryItems = [
 								<span>Datos para transferencia</span>
 								<div class="payment-prices">
 									<div class="payment-price"><span>1 pago</span><strong>$130.000</strong></div>
-									<div class="payment-price"><span>2 pagos</span><strong>$70.000</strong><small>cada uno</small></div>
-									<div class="payment-price featured"><span>3 pagos</span><strong>$50.000</strong><small>cada uno · solo julio</small></div>
+									<div class="payment-price"><span>2 pagos</span><strong>$70.000</strong><small>promoción hasta septiembre</small></div>
+									<div class="payment-price featured"><span>3 pagos</span><strong>$50.000</strong><small>Promoción válida por julio</small></div>
 								</div>
 
 								<div class="payment-detail">
@@ -656,7 +656,8 @@ const galleryItems = [
 					return
 				}
 
-				const data = new FormData(form)
+				const formData = new FormData(form)
+				const data = Object.fromEntries(formData.entries())
 
 				if (formMessage) {
 					formMessage.textContent = 'Enviando inscripcion...'
@@ -669,9 +670,10 @@ const galleryItems = [
 				try {
 					const res = await fetch(form.action, {
 						method: 'POST',
-						body: data,
+						body: JSON.stringify(data),
 						headers: {
-							accept: 'application/json'
+							accept: 'application/json',
+							'content-type': 'application/json'
 						}
 					})
 					const contentType = res.headers.get('content-type') || ''
