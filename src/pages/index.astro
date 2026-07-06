@@ -34,13 +34,27 @@ const categories = [
 ]
 
 const galleryItems = [
-	['Largada', '/assets/4.jpg'],
-	['Senderos', '/assets/5.jpg'],
+	['Largada Kids', '/assets/4.jpg'],
+	['Largada', '/assets/5.jpg'],
 	['Competencia', '/assets/6.jpg'],
 	['Rally Bike', '/assets/7.jpg'],
 	['El Trapiche', '/assets/8.webp'],
-	['Llegada', '/assets/9.jpg'],
-	['Montana', '/assets/img3.jpg']
+	['En lo más alto', '/assets/9.jpg'],
+	['Montana', '/assets/img3.jpg'],
+	['Podio', '/assets/a.jpg'],
+	['Cruce de agua', '/assets/agua.jpg'],
+	['Descenso', '/assets/bajada.jpg'],
+	['Pasión por el MTB', '/assets/ciclist.jpg'],
+	['En carrera', '/assets/ciclista.jpg'],
+	['Desafío serrano', '/assets/ciclista2.jpg'],
+	['Camino a la meta', '/assets/ciclista3.jpg'],
+	['El evento', '/assets/evento.jpg'],
+	['Los más chicos', '/assets/kid2.jpg'],
+	['En familia', '/assets/padrehija.jpg'],
+	['Paisajes del recorrido', '/assets/puente.jpg'],
+	['Cada detalle cuenta', '/assets/rueda.jpg'],
+	['La subida', '/assets/subida.jpg'],
+	['El desafío', '/assets/back2.jpg']
 ]
 ---
 
@@ -293,7 +307,6 @@ const galleryItems = [
 							class="route-card"
 							data-map-title="Recorrido 60 km"
 							data-map-image="/assets/60kmfull.jpeg"
-							data-map-link="https://maps.app.goo.gl/R3TzMoWtfJbaSdJ4A"
 							tabindex="0"
 							role="button"
 						>
@@ -309,7 +322,6 @@ const galleryItems = [
 							class="route-card"
 							data-map-title="Recorrido 35 km"
 							data-map-image="/assets/35kmfull.jpeg"
-							data-map-link="https://maps.app.goo.gl/R3TzMoWtfJbaSdJ4A"
 							tabindex="0"
 							role="button"
 						>
@@ -325,7 +337,6 @@ const galleryItems = [
 							class="route-card"
 							data-map-title="Circuito contrarreloj"
 							data-map-image="/assets/crono.png"
-							data-map-link="https://maps.app.goo.gl/R3TzMoWtfJbaSdJ4A"
 							tabindex="0"
 							role="button"
 						>
@@ -350,12 +361,29 @@ const galleryItems = [
 					</a>
 					<div class="gallery-grid">
 						{galleryItems.map(([label, src], index) => (
-							<article class={`gallery-item item-${index + 1}`}>
+							<article
+								class={`gallery-item item-${index + 1}`}
+								data-gallery-image={src}
+								data-gallery-title={label}
+								tabindex="0"
+								role="button"
+								aria-label={`Ampliar imagen: ${label}`}
+							>
 								<img src={src} alt={`Vuelta al Trapiche - ${label}`} loading="lazy" />
 								<span>{label}</span>
 							</article>
 						))}
 					</div>
+				</div>
+			</section>
+
+			<section class="gallery-cta" aria-labelledby="galleryCtaTitle">
+				<div class="gallery-cta__overlay"></div>
+				<div class="container gallery-cta__content">
+					<p class="section-label">Tu próxima aventura</p>
+					<h2 id="galleryCtaTitle">Ahora te toca vivirla</h2>
+					<p>Sumate a la Vuelta al Trapiche y asegurá tu lugar en la largada.</p>
+					<a class="btn primary" href="#inscripcion">Inscribirme ahora</a>
 				</div>
 			</section>
 		</main>
@@ -365,15 +393,12 @@ const galleryItems = [
 			<div class="map-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="mapModalTitle">
 				<div class="map-modal__header">
 					<div>
-						<p class="section-label">Ubicacion</p>
+						<p class="section-label" id="mapModalLabel">Ubicacion</p>
 						<h2 id="mapModalTitle">Recorrido</h2>
 					</div>
 					<button class="map-modal__close" type="button" data-map-close aria-label="Cerrar mapa">×</button>
 				</div>
 				<img id="mapImage" class="map-modal__image" src="" alt="" />
-				<a class="map-modal__external" id="mapExternalLink" href="https://maps.app.goo.gl/R3TzMoWtfJbaSdJ4A" target="_blank">
-					Abrir en Google Maps
-				</a>
 			</div>
 		</div>
 
@@ -479,7 +504,7 @@ const galleryItems = [
 			const mapModal = document.getElementById('mapModal') as HTMLElement | null
 			const mapImage = document.getElementById('mapImage') as HTMLImageElement | null
 			const mapModalTitle = document.getElementById('mapModalTitle') as HTMLElement | null
-			const mapExternalLink = document.getElementById('mapExternalLink') as HTMLAnchorElement | null
+			const mapModalLabel = document.getElementById('mapModalLabel') as HTMLElement | null
 			let currentStep = 0
 
 			const closeMapModal = () => {
@@ -503,9 +528,7 @@ const galleryItems = [
 					if (mapModalTitle) {
 						mapModalTitle.textContent = routeTitle
 					}
-					if (mapExternalLink) {
-						mapExternalLink.href = card.dataset.mapLink || 'https://maps.app.goo.gl/R3TzMoWtfJbaSdJ4A'
-					}
+					if (mapModalLabel) mapModalLabel.textContent = 'Ubicacion'
 					mapModal.classList.add('open')
 					mapModal.setAttribute('aria-hidden', 'false')
 					document.body.classList.add('modal-open')
@@ -516,6 +539,29 @@ const galleryItems = [
 					if (event instanceof KeyboardEvent && (event.key === 'Enter' || event.key === ' ')) {
 						event.preventDefault()
 						openMap()
+					}
+				})
+			})
+
+			document.querySelectorAll('.gallery-item').forEach((galleryItem) => {
+				const openGalleryImage = () => {
+					const item = galleryItem as HTMLElement
+					if (!mapModal || !mapImage) return
+					const imageTitle = item.dataset.galleryTitle || 'Galería'
+					mapImage.src = item.dataset.galleryImage || ''
+					mapImage.alt = `Vuelta al Trapiche - ${imageTitle}`
+					if (mapModalTitle) mapModalTitle.textContent = imageTitle
+					if (mapModalLabel) mapModalLabel.textContent = 'Galería'
+					mapModal.classList.add('open')
+					mapModal.setAttribute('aria-hidden', 'false')
+					document.body.classList.add('modal-open')
+				}
+
+				galleryItem.addEventListener('click', openGalleryImage)
+				galleryItem.addEventListener('keydown', (event) => {
+					if (event instanceof KeyboardEvent && (event.key === 'Enter' || event.key === ' ')) {
+						event.preventDefault()
+						openGalleryImage()
 					}
 				})
 			})
@@ -1631,19 +1677,6 @@ const galleryItems = [
 		background: #0d1b2a;
 	}
 
-	.map-modal__external {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		min-height: 52px;
-		background: linear-gradient(135deg, #035f0a, var(--teal));
-		color: var(--white);
-		font-family: var(--head);
-		font-weight: 800;
-		letter-spacing: 2px;
-		text-transform: uppercase;
-	}
-
 	.gallery-grid {
 		display: grid;
 		grid-template-columns: repeat(4, 1fr);
@@ -1705,6 +1738,12 @@ const galleryItems = [
 		position: relative;
 		overflow: hidden;
 		background: #0d1b2a;
+		cursor: zoom-in;
+	}
+
+	.gallery-item:focus-visible {
+		outline: 3px solid var(--teal);
+		outline-offset: 4px;
 	}
 
 	.gallery-item:first-child {
@@ -1744,6 +1783,42 @@ const galleryItems = [
 		inset: 0;
 		background: linear-gradient(180deg, transparent 45%, rgba(0, 0, 0, 0.68) 100%);
 		pointer-events: none;
+	}
+
+	.gallery-cta {
+		position: relative;
+		display: grid;
+		min-height: 520px;
+		place-items: center;
+		background: url('/assets/back.jpg') right bottom / cover no-repeat;
+		isolation: isolate;
+	}
+
+	.gallery-cta__overlay {
+		position: absolute;
+		z-index: -1;
+		inset: 0;
+		background:
+			linear-gradient(90deg, rgba(4, 8, 15, 0.9) 0%, rgba(4, 8, 15, 0.58) 56%, rgba(4, 8, 15, 0.3) 100%),
+			linear-gradient(0deg, rgba(4, 8, 15, 0.52), transparent 55%);
+	}
+
+	.gallery-cta__content {
+		padding-block: 90px;
+	}
+
+	.gallery-cta__content h2 {
+		max-width: 680px;
+		margin: 0 0 18px;
+		font-size: clamp(3rem, 8vw, 6.5rem);
+		line-height: 0.92;
+	}
+
+	.gallery-cta__content p:not(.section-label) {
+		max-width: 560px;
+		margin: 0 0 30px;
+		color: rgba(255, 255, 255, 0.86);
+		font-size: clamp(1.05rem, 2vw, 1.3rem);
 	}
 
 	footer {
