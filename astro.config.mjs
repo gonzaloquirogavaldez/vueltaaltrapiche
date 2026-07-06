@@ -9,7 +9,8 @@ import node from "@astrojs/node";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://mizu-theme.netlify.app",
+  site: "https://cdjeventos.com.ar",
+  output: "server",
   integrations: [
     icon(),
     sitemap(),
