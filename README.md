@@ -25,26 +25,6 @@ La opcion mas simple para este proyecto es desplegarlo en Netlify, porque ya est
 
 En Hostinger tambien puede funcionar si el plan permite aplicaciones Node.js persistentes. Si el plan solo permite hosting web estatico o PHP, el frontend puede verse, pero el formulario no funcionara.
 
-## Variables de entorno
-
-Crear estas variables en el panel del hosting:
-
-```env
-SMTP_HOST=smtp.example.com
-SMTP_PORT=465
-SMTP_SECURE=true
-SMTP_USER=usuario@example.com
-SMTP_PASS=clave-smtp
-SMTP_FROM="Vuelta al Trapiche <usuario@example.com>"
-MAIL_TO=hola@doblebe.com.ar
-PUBLIC_SITE_URL=https://tudominio.com
-```
-
-Notas:
-
-- `MAIL_TO` es el correo interno que recibe la inscripcion.
-- El correo del participante se toma desde el formulario y se agrega como copia.
-- `PUBLIC_SITE_URL` debe ser la URL real del sitio en produccion, sin barra final.
 
 ## Desarrollo local
 
