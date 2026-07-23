@@ -4,33 +4,40 @@ const description =
 	'Inscripcion online para Vuelta al Trapiche, la carrera de Mountain Bike en El Trapiche, San Luis.'
 
 const categories = [
-	['Promocionales femenino A', 'Hasta 35 anos'],
-	['Promocionales femenino B', 'Hasta 45 anos'],
-	['Promocionales femenino C', '+45 anos'],
-	['Kids camiseta', 'Hasta 3 anos'],
-	['Kids rueditas', '4 a 6 anos'],
-	['Kids mosquitos', '7 a 9 anos'],
-	['Kids infantiles', '10 a 12 anos'],
-	['Pre-Juveniles masculinos', '13 a 15 anos - 35k'],
-	['Pre-Juveniles femenino', '13 a 15 anos'],
-	['Master D2', '65 a 70 anos'],
-	['Master E', '+70 anos'],
-	['Damas Elite', 'Hasta 30 anos'],
-	['Damas A', '31 a 40 anos'],
-	['Damas B', '41 a 50 anos'],
-	['Damas C', '+51 anos'],
-	['Promocionales masculinos A', 'Hasta 30 anos'],
-	['Promocionales masculinos B', 'Hasta 40 anos'],
-	['Promocionales masculinos C', '+41 anos'],
-	['Juveniles', 'Hasta 23 anos'],
-	['Elite', 'Hasta 29 anos'],
-	['Master A1', '30 a 34 anos'],
-	['Master A2', '35 a 39 anos'],
-	['Master B1', '40 a 44 anos'],
-	['Master B2', '45 a 49 anos'],
-	['Master C1', '50 a 54 anos'],
-	['Master C2', '55 a 59 anos'],
-	['Master D1', '60 a 64 anos']
+	['Promocionales femenino A', 'Hasta 35 anos', '35k'],
+	['Promocionales femenino B', 'Hasta 45 anos', '45k'],
+	['Promocionales femenino C', '+45 anos', '45k'],
+	['Kids camicleta', 'Hasta 3 anos', 'Kids'],
+	['Kids rueditas', '4 a 6 anos', 'Kids'],
+	['Kids mosquitos', '7 a 9 anos', 'Kids'],
+	['Kids infantiles', '10 a 12 anos', 'Kids'],
+	['Pre-Juveniles masculinos', '13 a 15 anos', '35k'],
+	['Pre-Juveniles femenino', '13 a 15 anos', '35k'],	
+	['Damas Elite', 'Hasta 30 anos', '60k'],
+	['Damas A', '31 a 40 anos', '60k'],
+	['Damas B', '41 a 50 anos', '60k'],
+	['Damas C', '+51 anos', '60k'],
+	['Promocionales masculinos A', 'Hasta 30 anos', '35k'],
+	['Promocionales masculinos B', 'Hasta 40 anos', '35k'],
+	['Promocionales masculinos C', '+41 anos', '35k'],
+	['Juveniles', 'Hasta 23 anos', '35k'],
+	['Elite', 'Hasta 29 anos', '60k'],
+	['Master A1', '30 a 34 anos', '60k'],
+	['Master A2', '35 a 39 anos', '60k'],
+	['Master B1', '40 a 44 anos', '60k'],
+	['Master B2', '45 a 49 anos', '60k'],
+	['Master C1', '50 a 54 anos', '60k'],
+	['Master C2', '55 a 59 anos', '60k'],
+	['Master D1', '60 a 64 anos', '60k'],
+	['Master D2', '65 a 70 anos', '60k'],
+	['Master E', '+70 anos', '60k'],
+	['Parejas hombres 60k', 'Hasta 30 anos', '60k'],
+	['Parejas mujeres 60k', 'Hasta 30 anos', '60k'],
+	['Parejas mixtas 60k', 'Hasta 30 anos', '60k'],
+	['Parejas hombres 35K', 'Hasta 30 anos', '35k'],
+	['Parejas mujeres 35K', 'Hasta 30 anos', '35k'],
+	['Parejas mixtas 35K', 'Hasta 30 anos', '35k']
+	
 ]
 
 const galleryItems = [
@@ -195,6 +202,11 @@ const galleryItems = [
 										<strong>60 km</strong>
 										<span>Recorrido competitivo</span>
 									</label>
+									<label>
+										<input type="radio" name="evento" value="Vuelta al Trapiche - Kids" required />
+										<strong>KIDS</strong>
+										<span>Recorrido para niños</span>
+									</label>
 								</div>
 							</fieldset>
 							<div class="form-buttons">
@@ -205,12 +217,29 @@ const galleryItems = [
 						<div class="form-panel" data-step-panel="1">
 							<div class="categories">
 								{
-									categories.map(([name, age]) => (
-										<button type="button" class="category-button" data-category={`${name} (${age})`}>
-											<strong>{name}</strong>
-											<span>{age}</span>
-										</button>
-									))
+									categories.map(([name, age, distance]) =>
+										distance === 'Kids' ? (
+											<button
+												type="button"
+												class="category-button"
+												data-category={`${name} (${age})`}
+												data-event-distance={distance.toLowerCase()}
+											>
+												<strong>{name}</strong>
+												<span>{age}</span>
+											</button>
+										) : (
+											<button
+												type="button"
+												class="category-button"
+												data-category={`${name} (${age}) - ${distance}`}
+												data-event-distance={distance.toLowerCase()}
+											>
+												<strong>{name}</strong>
+												<span>{age} - {distance}</span>
+											</button>
+										)
+									)
 								}
 							</div>
 							<input type="hidden" name="categoria" id="categoryInput" required />
@@ -501,11 +530,46 @@ const galleryItems = [
 			const progressItems = Array.from(document.querySelectorAll('.form-progress span')) as HTMLElement[]
 			const nextButtons = Array.from(document.querySelectorAll('.form-next')) as HTMLButtonElement[]
 			const prevButtons = Array.from(document.querySelectorAll('.form-prev')) as HTMLButtonElement[]
+			const eventInputs = Array.from(document.querySelectorAll('input[name="evento"]')) as HTMLInputElement[]
+			const categoryButtons = Array.from(document.querySelectorAll('.category-button')) as HTMLButtonElement[]
 			const mapModal = document.getElementById('mapModal') as HTMLElement | null
 			const mapImage = document.getElementById('mapImage') as HTMLImageElement | null
 			const mapModalTitle = document.getElementById('mapModalTitle') as HTMLElement | null
 			const mapModalLabel = document.getElementById('mapModalLabel') as HTMLElement | null
 			let currentStep = 0
+
+			const getSelectedEventDistance = () => {
+				const selectedEvent = eventInputs.find((input) => input.checked)?.value || ''
+				if (selectedEvent.toLowerCase().includes('kids')) return 'kids'
+				const distance = selectedEvent.match(/(\d+)\s*km/i)?.[1]
+				return distance ? `${distance}k` : ''
+			}
+
+			const clearCategorySelection = () => {
+				categoryButtons.forEach((item) => item.classList.remove('selected'))
+				if (categoryInput) {
+					categoryInput.value = ''
+				}
+			}
+
+			const updateCategoryAvailability = () => {
+				const selectedDistance = getSelectedEventDistance()
+				let selectedCategoryIsAvailable = false
+
+				categoryButtons.forEach((button) => {
+					const isAvailable = !selectedDistance || button.dataset.eventDistance === selectedDistance
+					button.hidden = !isAvailable
+					button.disabled = !isAvailable
+
+					if (isAvailable && button.dataset.category === categoryInput?.value) {
+						selectedCategoryIsAvailable = true
+					}
+				})
+
+				if (categoryInput?.value && !selectedCategoryIsAvailable) {
+					clearCategorySelection()
+				}
+			}
 
 			const closeMapModal = () => {
 				if (!mapModal) return
@@ -576,9 +640,9 @@ const galleryItems = [
 				}
 			})
 
-			document.querySelectorAll('.category-button').forEach((button) => {
+			categoryButtons.forEach((button) => {
 				button.addEventListener('click', () => {
-					document.querySelectorAll('.category-button').forEach((item) => item.classList.remove('selected'))
+					categoryButtons.forEach((item) => item.classList.remove('selected'))
 					button.classList.add('selected')
 					if (categoryInput) {
 						categoryInput.value = (button as HTMLButtonElement).dataset.category || ''
@@ -588,6 +652,12 @@ const galleryItems = [
 					}
 				})
 			})
+
+			eventInputs.forEach((input) => {
+				input.addEventListener('change', updateCategoryAvailability)
+			})
+
+			updateCategoryAvailability()
 
 			const setStep = (step: number) => {
 				currentStep = Math.max(0, Math.min(step, stepPanels.length - 1))
@@ -690,7 +760,8 @@ const galleryItems = [
 
 					form.reset()
 					categoryInput.value = ''
-					document.querySelectorAll('.category-button').forEach((item) => item.classList.remove('selected'))
+					clearCategorySelection()
+					updateCategoryAvailability()
 					setStep(0)
 					if (formMessage) {
 						formMessage.textContent = 'Inscripcion enviada. Te enviamos una copia por email.'
