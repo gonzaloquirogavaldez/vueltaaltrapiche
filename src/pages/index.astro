@@ -42,6 +42,15 @@ const categories = [
 	
 ]
 
+const jerseySizes = [
+	['XS/1', '45cm', '50cm'],
+	['S/2', '48cm', '52cm'],
+	['M/3', '50cm', '54cm'],
+	['L/4', '52cm', '56cm'],
+	['XL/5', '56cm', '58cm'],
+	['XXL/6', '58cm', '60cm']
+]
+
 const galleryItems = [
 	['Largada Kids', '/assets/4.jpg'],
 	['Largada', '/assets/5.jpg'],
@@ -176,8 +185,9 @@ const galleryItems = [
 						<div class="form-progress">
 							<span class="active">1 Datos</span>
 							<span>2 Categoria</span>
-							<span>3 Reglamento</span>
-							<span>4 Pago</span>
+							<span data-progress-step="2">3 Jersey</span>
+							<span>4 Reglamento</span>
+							<span>5 Pago</span>
 						</div>
 
 						<div class="form-panel active" data-step-panel="0">
@@ -190,7 +200,7 @@ const galleryItems = [
 								<label>Fecha de nacimiento<input name="fechaNacimiento" type="text" placeholder="Ej: 15/03/1992" required /></label>
 								<label>Localidad<input name="localidad" type="text" placeholder="Ej: San Luis" required /></label>
 							</div>
-							<label>Equipo<input name="equipo" type="text" placeholder="Ej: Pedal Sur Team" /></label>
+							<label>Equipo (en caso de ser pareja poner apellido de cada uno)<input name="equipo" type="text" placeholder="En el caso de ser parejas poner apellido de cada uno" /></label>
 							<fieldset class="route-options">
 								<legend>Elegí tu recorrido</legend>
 								<div>
@@ -252,6 +262,47 @@ const galleryItems = [
 						</div>
 
 						<div class="form-panel" data-step-panel="2">
+							<fieldset class="jersey-options">
+								<legend>Seleccion de jersey</legend>
+								<p>Jersey disponible para los primeros 100 inscriptos.</p>
+								<div class="jersey-layout">
+									<figure class="jersey-preview">
+										<img src="/assets/jersey.jpeg" alt="Jersey oficial de la Vuelta al Trapiche" loading="lazy" />
+									</figure>
+									<div class="jersey-table" role="table" aria-label="Tabla de talles de jersey">
+										<div class="jersey-row jersey-head" role="row">
+											<span role="columnheader">Elegir</span>
+											<span role="columnheader">Talle</span>
+											<span role="columnheader">Ancho</span>
+											<span role="columnheader">Alto</span>
+										</div>
+										{
+											jerseySizes.map(([size, width, height]) => (
+												<label class="jersey-row" role="row">
+													<span role="cell">
+														<input
+															type="radio"
+															name="jersey"
+															value={`${size} - ancho ${width} alto ${height}`}
+															required
+														/>
+													</span>
+													<strong role="cell">{size}</strong>
+													<span role="cell">{width}</span>
+													<span role="cell">{height}</span>
+												</label>
+											))
+										}
+									</div>
+								</div>
+							</fieldset>
+							<div class="form-buttons split">
+								<button class="submit secondary form-prev" type="button">Volver</button>
+								<button class="submit form-next" type="button">Continuar</button>
+							</div>
+						</div>
+
+						<div class="form-panel" data-step-panel="3">
 							<div class="rules">
 								<strong>Reglamento:</strong> La inscripcion se realiza unicamente online y queda
 								confirmada una vez completado el pago. El corredor acepta las condiciones de
@@ -272,7 +323,7 @@ const galleryItems = [
 							</div>
 						</div>
 
-						<div class="form-panel" data-step-panel="3">
+						<div class="form-panel" data-step-panel="4">
 							<div class="payment-box">
 								<span>Datos para transferencia</span>
 								<div class="payment-prices">
@@ -533,6 +584,7 @@ const galleryItems = [
 			const nextButtons = Array.from(document.querySelectorAll('.form-next')) as HTMLButtonElement[]
 			const prevButtons = Array.from(document.querySelectorAll('.form-prev')) as HTMLButtonElement[]
 			const eventInputs = Array.from(document.querySelectorAll('input[name="evento"]')) as HTMLInputElement[]
+			const jerseyInputs = Array.from(document.querySelectorAll('input[name="jersey"]')) as HTMLInputElement[]
 			const categoryButtons = Array.from(document.querySelectorAll('.category-button')) as HTMLButtonElement[]
 			const mapModal = document.getElementById('mapModal') as HTMLElement | null
 			const mapImage = document.getElementById('mapImage') as HTMLImageElement | null
@@ -547,6 +599,45 @@ const galleryItems = [
 				return distance ? `${distance}k` : ''
 			}
 
+			const shouldShowJerseyStep = () => getSelectedEventDistance() !== 'kids'
+
+			const getVisibleSteps = () =>
+				stepPanels
+					.map((panel, index) => ({ panel, index }))
+					.filter(({ index }) => index !== 2 || shouldShowJerseyStep())
+
+			const normalizeStep = (step: number, direction = 1) => {
+				const visibleSteps = getVisibleSteps()
+				if (!visibleSteps.length) return 0
+				const minStep = visibleSteps[0].index
+				const maxStep = visibleSteps[visibleSteps.length - 1].index
+				let nextStep = Math.max(minStep, Math.min(step, maxStep))
+
+				while (!visibleSteps.some(({ index }) => index === nextStep)) {
+					nextStep += direction >= 0 ? 1 : -1
+					if (nextStep > maxStep) return maxStep
+					if (nextStep < minStep) return minStep
+				}
+
+				return nextStep
+			}
+
+			const updateJerseyStepAvailability = () => {
+				const showJerseyStep = shouldShowJerseyStep()
+				const jerseyPanel = stepPanels[2]
+				const jerseyProgress = progressItems[2]
+
+				jerseyPanel?.toggleAttribute('hidden', !showJerseyStep)
+				jerseyProgress?.toggleAttribute('hidden', !showJerseyStep)
+				jerseyInputs.forEach((input) => {
+					input.required = showJerseyStep
+					input.disabled = !showJerseyStep
+					if (!showJerseyStep) {
+						input.checked = false
+					}
+				})
+			}
+
 			const clearCategorySelection = () => {
 				categoryButtons.forEach((item) => item.classList.remove('selected'))
 				if (categoryInput) {
@@ -557,6 +648,7 @@ const galleryItems = [
 			const updateCategoryAvailability = () => {
 				const selectedDistance = getSelectedEventDistance()
 				let selectedCategoryIsAvailable = false
+				updateJerseyStepAvailability()
 
 				categoryButtons.forEach((button) => {
 					const isAvailable = !selectedDistance || button.dataset.eventDistance === selectedDistance
@@ -662,7 +754,7 @@ const galleryItems = [
 			updateCategoryAvailability()
 
 			const setStep = (step: number) => {
-				currentStep = Math.max(0, Math.min(step, stepPanels.length - 1))
+				currentStep = normalizeStep(step, step >= currentStep ? 1 : -1)
 				stepPanels.forEach((panel, index) => {
 					panel.classList.toggle('active', index === currentStep)
 				})
@@ -703,14 +795,14 @@ const galleryItems = [
 			nextButtons.forEach((button) => {
 				button.addEventListener('click', () => {
 					if (validateStep(currentStep)) {
-						setStep(currentStep + 1)
+						setStep(normalizeStep(currentStep + 1, 1))
 					}
 				})
 			})
 
 			prevButtons.forEach((button) => {
 				button.addEventListener('click', () => {
-					setStep(currentStep - 1)
+					setStep(normalizeStep(currentStep - 1, -1))
 				})
 			})
 
@@ -1215,7 +1307,7 @@ const galleryItems = [
 
 	.form-progress {
 		display: grid;
-		grid-template-columns: repeat(4, 1fr);
+		grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
 		gap: 8px;
 		margin-bottom: 28px;
 		color: var(--gray);
@@ -1240,6 +1332,11 @@ const galleryItems = [
 	.form-progress .done {
 		background: rgba(5, 247, 17, 0.16);
 		color: var(--teal-light);
+	}
+
+	.form-progress span[hidden],
+	.form-panel[hidden] {
+		display: none;
 	}
 
 	.form-panel {
@@ -1343,6 +1440,111 @@ const galleryItems = [
 	.route-options span {
 		color: var(--gray);
 		font-size: 0.82rem;
+	}
+
+	.jersey-options {
+		margin: 0 0 20px;
+		border: 0;
+		padding: 0;
+	}
+
+	.jersey-options legend {
+		margin-bottom: 8px;
+		color: var(--white);
+		font-family: var(--head);
+		font-size: 1.35rem;
+		font-weight: 800;
+		text-transform: uppercase;
+	}
+
+	.jersey-options p {
+		margin: 0 0 16px;
+		color: var(--teal-light);
+		font-weight: 800;
+	}
+
+	.jersey-layout {
+		display: grid;
+		grid-template-columns: minmax(220px, 0.75fr) minmax(0, 1.25fr);
+		gap: 18px;
+		align-items: stretch;
+	}
+
+	.jersey-preview {
+		overflow: hidden;
+		margin: 0;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 12px;
+		background: rgba(255, 255, 255, 0.03);
+	}
+
+	.jersey-preview img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		min-height: 280px;
+		object-fit: cover;
+	}
+
+	.jersey-table {
+		overflow: hidden;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 12px;
+		background: rgba(255, 255, 255, 0.03);
+	}
+
+	.jersey-row {
+		display: grid;
+		grid-template-columns: 0.7fr 1.2fr 1fr 1fr;
+		align-items: center;
+		gap: 12px;
+		margin: 0;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+		padding: 12px 16px;
+		color: var(--white);
+	}
+
+	.jersey-row:last-child {
+		border-bottom: 0;
+	}
+
+	.jersey-head {
+		background: rgba(5, 247, 17, 0.1);
+		color: rgba(255, 255, 255, 0.72);
+		font-family: var(--head);
+		font-size: 0.78rem;
+		font-weight: 800;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+	}
+
+	label.jersey-row {
+		cursor: pointer;
+		transition:
+			background 0.2s ease,
+			box-shadow 0.2s ease;
+	}
+
+	label.jersey-row:hover,
+	label.jersey-row:has(input:focus-visible) {
+		background: rgba(5, 247, 17, 0.1);
+	}
+
+	label.jersey-row:has(input:checked) {
+		background: rgba(5, 247, 17, 0.16);
+		box-shadow: inset 4px 0 0 var(--teal-light);
+	}
+
+	.jersey-row input {
+		width: 18px;
+		min-height: 18px;
+		accent-color: var(--teal-light);
+	}
+
+	.jersey-row strong {
+		font-family: var(--head);
+		font-size: 1.05rem;
+		text-transform: uppercase;
 	}
 
 	.categories {
@@ -1988,8 +2190,9 @@ const galleryItems = [
 			grid-template-columns: 1fr;
 		}
 
+		.jersey-layout,
 		.form-progress {
-			grid-template-columns: repeat(2, 1fr);
+			grid-template-columns: 1fr;
 		}
 
 		.gallery-grid {
