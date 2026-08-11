@@ -58,9 +58,10 @@ app.post('/inscripcion', async (request, response) => {
 		evento: clean(request.body?.evento),
 		categoria: clean(request.body?.categoria),
 		jersey: clean(request.body?.jersey),
+		formaPago: clean(request.body?.formaPago),
 		reglamento: request.body?.reglamento === 'on' || request.body?.reglamento === true
 	}
-	const required = ['nombre', 'apellido', 'dni', 'telefono', 'email', 'fechaNacimiento', 'localidad', 'evento', 'categoria']
+	const required = ['nombre', 'apellido', 'dni', 'telefono', 'email', 'fechaNacimiento', 'localidad', 'evento', 'categoria', 'formaPago']
 	if (!data.evento.toLowerCase().includes('kids')) {
 		required.push('jersey')
 	}
@@ -80,7 +81,7 @@ app.post('/inscripcion', async (request, response) => {
 	const rows = [
 		['Nombre', `${data.nombre} ${data.apellido}`], ['DNI', data.dni], ['Teléfono', data.telefono],
 		['Email', data.email], ['Fecha de nacimiento', data.fechaNacimiento], ['Localidad', data.localidad],
-		['Equipo', data.equipo || '-'], ['Evento', data.evento], ['Categoría', data.categoria], ['Jersey', data.jersey || 'No aplica'], ['Aceptó reglamento', 'Sí']
+		['Equipo', data.equipo || '-'], ['Evento', data.evento], ['Categoría', data.categoria], ['Jersey', data.jersey || 'No aplica'], ['Forma de pago elegida', data.formaPago], ['Aceptó reglamento', 'Sí']
 	]
 	const text = ['Nueva inscripción Vuelta al Trapiche 2026', '', ...rows.map(([label, value]) => `${label}: ${value}`)].join('\n')
 	const html = `<div style="font-family:Arial,sans-serif;color:#111827;line-height:1.5"><h1>Nueva inscripción Vuelta al Trapiche 2026</h1><table cellpadding="8" cellspacing="0" style="border-collapse:collapse;width:100%;max-width:680px">${rows.map(([label, value]) => `<tr><th align="left" style="border:1px solid #d1d5db;background:#f3f4f6">${escapeHtml(label)}</th><td style="border:1px solid #d1d5db">${escapeHtml(value)}</td></tr>`).join('')}</table></div>`

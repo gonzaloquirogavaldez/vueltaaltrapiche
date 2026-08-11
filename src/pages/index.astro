@@ -327,9 +327,17 @@ const galleryItems = [
 							<div class="payment-box">
 								<span>Datos para transferencia</span>
 								<div class="payment-prices">
-									<div class="payment-price"><span>1 pago</span><strong>$130.000</strong></div>
-									<div class="payment-price"><span>2 pagos</span><strong>$70.000</strong><small>promoción hasta septiembre</small></div>
-									<div class="payment-price featured"><span>3 pagos</span><strong>$50.000</strong><small>Promoción válida por julio</small></div>
+									<label class="payment-price">
+										<input type="radio" name="formaPago" value="1 pago - $130.000" required />
+										<span>1 pago</span>
+										<strong>$130.000</strong>
+									</label>
+									<label class="payment-price">
+										<input type="radio" name="formaPago" value="2 pagos - $70.000" required />
+										<span>2 pagos</span>
+										<strong>$70.000</strong>
+										<small>promoción hasta septiembre</small>
+									</label>									
 								</div>
 
 								<div class="payment-detail">
@@ -1663,12 +1671,13 @@ const galleryItems = [
 
 	.payment-prices {
 		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 8px;
 		margin: 4px 0 8px;
 	}
 
 	.payment-price {
+		position: relative;
 		display: flex;
 		min-width: 0;
 		flex-direction: column;
@@ -1678,6 +1687,26 @@ const galleryItems = [
 		background: rgba(0, 0, 0, 0.18);
 		padding: 12px 8px;
 		text-align: center;
+		cursor: pointer;
+		transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+	}
+
+	.payment-price:hover,
+	.payment-price:has(input:focus-visible) {
+		border-color: rgba(5, 247, 17, 0.55);
+	}
+
+	.payment-price:has(input:checked) {
+		border-color: var(--teal-light);
+		background: rgba(5, 247, 17, 0.16);
+		box-shadow: 0 0 24px rgba(5, 247, 17, 0.16);
+	}
+
+	.payment-price input {
+		position: absolute;
+		width: 1px;
+		min-height: 1px;
+		opacity: 0;
 	}
 
 	.payment-price.featured {
