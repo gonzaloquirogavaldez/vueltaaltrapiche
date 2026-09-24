@@ -324,7 +324,8 @@ const galleryItems = [
 						</div>
 
 						<div class="form-panel" data-step-panel="4">
-							<div class="payment-box">
+							<p id="kidsPaymentMessage" hidden></p>
+							<div class="payment-box" id="paymentBox">
 								<span>Datos para transferencia</span>
 								<div class="payment-prices">
 									<label class="payment-price">
@@ -352,7 +353,7 @@ const galleryItems = [
 								<small>CUIT/CUIL: 20 - 28838330 - 9</small>
 								<small>Titular: MARIANO DANIEL GIL</small>
 							</div>
-							<div class="payment-notice">
+							<div class="payment-notice" id="paymentNotice">
 								<strong>Importante:</strong> una vez realizado el pago, es obligatorio enviar el comprobante por WhatsApp.
 								<a href="https://wa.me/5492664630799?text=Hola%2C%20env%C3%ADo%20el%20comprobante%20de%20pago%20de%20mi%20inscripci%C3%B3n%20a%20la%20Vuelta%20al%20Trapiche." target="_blank" rel="noopener noreferrer">Enviar comprobante por WhatsApp</a>
 							</div>
@@ -585,6 +586,11 @@ const galleryItems = [
 
 			const form = document.getElementById('registrationForm') as HTMLFormElement | null
 			const categoryInput = document.getElementById('categoryInput') as HTMLInputElement | null
+			const paymentBox = document.getElementById('paymentBox') as HTMLElement | null
+			const paymentNotice = document.getElementById('paymentNotice') as HTMLElement | null
+			const kidsPaymentMessage = document.getElementById('kidsPaymentMessage') as HTMLElement | null
+			const paymentInputs = Array.from(document.querySelectorAll('input[name="formaPago"]')) as HTMLInputElement[]
+			const paymentLabels = Array.from(document.querySelectorAll('.payment-price')) as HTMLElement[]
 			const formMessage = document.getElementById('formMessage') as HTMLElement | null
 			const submitButton = form?.querySelector('button[type="submit"]') as HTMLButtonElement | null
 			const stepPanels = Array.from(document.querySelectorAll('[data-step-panel]')) as HTMLElement[]
@@ -608,6 +614,36 @@ const galleryItems = [
 			}
 
 			const shouldShowJerseyStep = () => getSelectedEventDistance() !== 'kids'
+
+			const updatePaymentOptions = () => {
+				const selectedCategory = categoryInput?.value.toLowerCase() || ''
+				const isKids = getSelectedEventDistance() === 'kids'
+				const isFreeKids = selectedCategory.includes('kids camicleta')
+				paymentInputs.forEach((input, index) => {
+					input.required = !isFreeKids
+					input.disabled = isFreeKids || (isKids && index > 0)
+					if (isKids && index === 0) {
+						input.value = '1 pago - $30.000'
+						const amount = input.closest('.payment-price')?.querySelector('strong')
+						if (amount) amount.textContent = '$30.000'
+					} else if (!isKids && index === 0) {
+						input.value = '1 pago - $130.000'
+						const amount = input.closest('.payment-price')?.querySelector('strong')
+						if (amount) amount.textContent = '$130.000'
+					}
+					if (isFreeKids) input.checked = false
+				})
+				paymentLabels.forEach((label, index) => {
+					label.hidden = isKids && index > 0
+					label.classList.toggle('featured', isKids && index === 0)
+				})
+				if (paymentBox) paymentBox.hidden = isFreeKids
+				if (paymentNotice) paymentNotice.hidden = isFreeKids
+				if (kidsPaymentMessage) {
+					kidsPaymentMessage.hidden = !isFreeKids
+					kidsPaymentMessage.textContent = isFreeKids ? 'La inscripcion para Kids camicleta es sin cargo.' : ''
+				}
+			}
 
 			const getVisibleSteps = () =>
 				stepPanels
@@ -671,6 +707,7 @@ const galleryItems = [
 				if (categoryInput?.value && !selectedCategoryIsAvailable) {
 					clearCategorySelection()
 				}
+				updatePaymentOptions()
 			}
 
 			const closeMapModal = () => {
@@ -749,6 +786,7 @@ const galleryItems = [
 					if (categoryInput) {
 						categoryInput.value = (button as HTMLButtonElement).dataset.category || ''
 					}
+					updatePaymentOptions()
 					if (formMessage) {
 						formMessage.textContent = ''
 					}
@@ -756,7 +794,10 @@ const galleryItems = [
 			})
 
 			eventInputs.forEach((input) => {
-				input.addEventListener('change', updateCategoryAvailability)
+				input.addEventListener('change', () => {
+					updateCategoryAvailability()
+					updatePaymentOptions()
+				})
 			})
 
 			updateCategoryAvailability()
@@ -1689,6 +1730,13 @@ const galleryItems = [
 		text-align: center;
 		cursor: pointer;
 		transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+	}
+
+	.payment-price[hidden],
+	#paymentBox[hidden],
+	#paymentNotice[hidden],
+	#kidsPaymentMessage[hidden] {
+		display: none;
 	}
 
 	.payment-price:hover,
