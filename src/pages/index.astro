@@ -871,6 +871,9 @@ const galleryItems = [
 
 				const formData = new FormData(form)
 				const data = Object.fromEntries(formData.entries())
+				if (categoryInput.value.toLowerCase().includes('kids camicleta')) {
+					data.formaPago = 'Sin cargo'
+				}
 
 				if (formMessage) {
 					formMessage.textContent = 'Enviando inscripcion...'
