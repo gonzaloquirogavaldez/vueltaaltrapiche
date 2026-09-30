@@ -61,7 +61,10 @@ app.post('/inscripcion', async (request, response) => {
 		formaPago: clean(request.body?.formaPago),
 		reglamento: request.body?.reglamento === 'on' || request.body?.reglamento === true
 	}
-	const required = ['nombre', 'apellido', 'dni', 'telefono', 'email', 'fechaNacimiento', 'localidad', 'evento', 'categoria', 'formaPago']
+	const isFreeKids = data.categoria.toLowerCase().includes('kids camicleta')
+	if (isFreeKids) data.formaPago = 'Sin cargo'
+	const required = ['nombre', 'apellido', 'dni', 'telefono', 'email', 'fechaNacimiento', 'localidad', 'evento', 'categoria']
+	if (!isFreeKids) required.push('formaPago')
 	if (!data.evento.toLowerCase().includes('kids')) {
 		required.push('jersey')
 	}
