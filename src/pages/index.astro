@@ -304,13 +304,17 @@ const galleryItems = [
 								<small>CUIT/CUIL: 20 - 28838330 - 9</small>
 								<small>Titular: MARIANO DANIEL GIL</small>
 							</div>
-							<div class="payment-notice" id="paymentNotice">
-								<strong>Importante:</strong> una vez realizado el pago, es obligatorio enviar el comprobante por WhatsApp.
-								<a href="https://wa.me/5492664630799?text=Hola%2C%20env%C3%ADo%20el%20comprobante%20de%20pago%20de%20mi%20inscripci%C3%B3n%20a%20la%20Vuelta%20al%20Trapiche." target="_blank" rel="noopener noreferrer">Enviar comprobante por WhatsApp</a>
-							</div>
 							<div class="form-buttons split">
 								<button class="submit secondary form-prev" type="button">Volver</button>
 								<button class="submit" type="submit">Confirmar inscripcion</button>
+							</div>
+						</div>
+						<div class="registration-success" id="registrationSuccess" hidden aria-live="polite">
+							<h3>¡Inscripción recibida!</h3>
+							<p id="registrationSuccessMessage"></p>
+							<div class="payment-notice" id="successPaymentNotice">
+								<strong>Último paso obligatorio:</strong> para que tu inscripción sea válida, debes realizar el pago y enviar el comprobante por WhatsApp. Sin el comprobante, la inscripción no será contabilizada.
+								<a id="sendReceiptLink" href="https://wa.me/5492664630799?text=Hola%2C%20env%C3%ADo%20el%20comprobante%20de%20pago%20de%20mi%20inscripci%C3%B3n%20a%20la%20Vuelta%20al%20Trapiche." target="_blank" rel="noopener noreferrer">Enviar comprobante por WhatsApp</a>
 							</div>
 						</div>
 						<p class="form-message" id="formMessage" role="status"></p>
@@ -538,7 +542,9 @@ const galleryItems = [
 			const form = document.getElementById('registrationForm') as HTMLFormElement | null
 			const categoryInput = document.getElementById('categoryInput') as HTMLInputElement | null
 			const paymentBox = document.getElementById('paymentBox') as HTMLElement | null
-			const paymentNotice = document.getElementById('paymentNotice') as HTMLElement | null
+			const registrationSuccess = document.getElementById('registrationSuccess') as HTMLElement | null
+			const registrationSuccessMessage = document.getElementById('registrationSuccessMessage') as HTMLElement | null
+			const successPaymentNotice = document.getElementById('successPaymentNotice') as HTMLElement | null
 			const kidsPaymentMessage = document.getElementById('kidsPaymentMessage') as HTMLElement | null
 			const paymentInputs = Array.from(document.querySelectorAll('input[name="formaPago"]')) as HTMLInputElement[]
 			const paymentLabels = Array.from(document.querySelectorAll('.payment-price')) as HTMLElement[]
@@ -587,7 +593,6 @@ const galleryItems = [
 					label.classList.toggle('featured', isKids && index === 0)
 				})
 				if (paymentBox) paymentBox.hidden = isFreeKids
-				if (paymentNotice) paymentNotice.hidden = isFreeKids
 				if (kidsPaymentMessage) {
 					kidsPaymentMessage.hidden = !isFreeKids
 					kidsPaymentMessage.textContent = isFreeKids ? 'La inscripcion para Kids camicleta es sin cargo.' : ''
@@ -835,18 +840,28 @@ const galleryItems = [
 						throw new Error(result.message || 'No se pudo enviar la inscripcion.')
 					}
 
+					const isFreeKids = categoryInput.value.toLowerCase().includes('kids camicleta')
+					if (registrationSuccessMessage) {
+						registrationSuccessMessage.textContent = isFreeKids
+							? 'Tu inscripción quedó registrada. Esta categoría es sin cargo y no requiere comprobante.'
+							: 'Completa el pago y envía el comprobante para que podamos contabilizar tu inscripción.'
+					}
+					if (successPaymentNotice) successPaymentNotice.hidden = isFreeKids
+					stepPanels.forEach((panel) => (panel.hidden = true))
+					if (registrationSuccess) registrationSuccess.hidden = false
+					if (formMessage) formMessage.textContent = ''
 					form.reset()
 					categoryInput.value = ''
 					clearCategorySelection()
 					updateCategoryAvailability()
-					setStep(0)
-					if (formMessage) {
-						formMessage.textContent = 'Inscripcion enviada. Te enviamos una copia por email.'
-					}
 				} catch (error) {
 					if (formMessage) {
 						formMessage.textContent =
-							error instanceof Error ? error.message : 'No se pudo enviar la inscripcion.'
+							error instanceof TypeError
+								? 'No se pudo conectar con el servicio de inscripcion. Tus datos siguen cargados; revisa tu conexion e intenta enviar nuevamente.'
+								: error instanceof Error
+									? error.message
+									: 'No se pudo enviar la inscripcion.'
 					}
 				} finally {
 					if (submitButton) {
@@ -1647,6 +1662,33 @@ const galleryItems = [
 	.copy-button:hover,
 	.copy-button:focus-visible {
 		background: rgba(5, 247, 17, 0.24);
+	}
+
+	.registration-success {
+		display: grid;
+		gap: 12px;
+		padding: 8px 0;
+	}
+
+	.registration-success[hidden] {
+		display: none;
+	}
+
+	.registration-success h3,
+	.registration-success p {
+		margin: 0;
+	}
+
+	.registration-success h3 {
+		color: var(--teal-light);
+	}
+
+	.registration-success p {
+		color: var(--gray);
+	}
+
+	.registration-success .payment-notice {
+		margin-top: 4px;
 	}
 
 	.payment-notice {
